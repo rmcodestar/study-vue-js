@@ -27,6 +27,9 @@
                     <span>{{remainingMinute}}</span>:<span>{{remainingSecond}}</span>
                 </div>
             </div>
+            <div class="well" v-if="!isWorking">
+                <img src="kitty.png">
+            </div>
         </div>
     </body>
     <script>
@@ -65,6 +68,9 @@
                 }
                 , remainingSecond : function() {
                     return (this.second < 10)? "0" + this.second : this.second;
+                }
+                , isWorking : function() {
+                    return this.state == STATE.WORK;
                 }
             }
             , methods : {
