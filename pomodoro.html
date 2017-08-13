@@ -37,10 +37,18 @@
                 <img :src="imageSource">
             </div>
         </template>
+        <template id="barComponent">
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" :aria-valuenow="percent" aria-valuemin="0" aria-valuemax="100" v-bind:style="widthClass">
+                  {{percent}}%
+                </div>
+              </div>
+        </template>
         <div id="app">
             <control-component v-on:stop="reset" v-on:tick="tick"></control-component>
             <state-title-component :state="state"></state-title-component>
             <count-down-component :minute="minute" :second="second"></count-down-component>
+            <bar-component :percent="progressPercent"></bar-component>
             <kitty-component :is-visble="isWorking" :image-source="kittyImage"></kitty-component>
         </div>
     </body>
@@ -125,6 +133,18 @@
             , props : ["isVisble", "imageSource"]
         });
         
+        var barComponent = Vue.extend({
+            template : "#barComponent"
+            , props : ["percent"]
+            , computed : {
+                widthClass : function () {
+                    return {
+                        "width" : this.percent + "%"
+                    }
+                }
+            }
+        });
+        
         new Vue({
             el : "#app"
             , data : function() {
@@ -135,6 +155,7 @@
                 , "state-title-component" : stateTitleComponent
                 , "count-down-component" : countDownComponent
                 , "kitty-component" : kittyComponent
+                , "bar-component" : barComponent
             }
             , methods : {
                 reset : function() {
@@ -172,6 +193,19 @@
             , computed : {
                 isWorking : function() {
                     return this.state == STATE.WORK;
+                }
+                , progressPercent : function() {
+                    var total = 0;
+
+                    if (this.state === STATE.WORK) {
+                        total = MINUTES_WORKIG_TIME  *60;
+                    
+                    } else {
+                        total = MINUTES_REST_TIME  *60;
+                    }
+                    
+                    var percent = (total === 0)? 0 : (this.minute* 60 + this.second) / total * 100;
+                    return  percent.toFixed(1);
                 }
             }
         });                
