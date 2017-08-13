@@ -10,7 +10,7 @@
         <script src="https://unpkg.com/vue"></script>
     </head>
     <body>
-        <div id="app">
+        <template id="controlsComponent">
             <div class="page-header">
                 <h1>
                     <span>POMODORO</span>
@@ -21,15 +21,27 @@
                     </div>
                 </h1>
             </div>
-            <h4>STATE : {{title}}...</h4>
+        </template>
+        <template id="countDownComponent">
             <div class="well">
                 <div class="pomodoro-timer">
                     <span>{{remainingMinute}}</span>:<span>{{remainingSecond}}</span>
                 </div>
             </div>
-            <div class="well" v-if="!isWorking">
-                <img src="kitty.png">
+        </template>
+        <template id="stateTitleComponent">
+            <h4>STATE : {{title}}...</h4>
+        </template>
+        <template id="kittensComponent">
+            <div class="well" v-if="!isVisble">
+                <img :src="imageSource">
             </div>
+        </template>
+        <div id="app">
+            <control-component v-on:stop="reset" v-on:tick="tick"></control-component>
+            <state-title-component :state="state"></state-title-component>
+            <count-down-component :minute="minute" :second="second"></count-down-component>
+            <kitty-component :is-visble="isWorking" :image-source="kittyImage"></kitty-component>
         </div>
     </body>
     <script>
@@ -48,36 +60,27 @@
         const MINUTES_REST_TIME = 5;
         const ONE_SECOND = 1000;
 
-        var data = {
+        var pomodoro = {
             minute : MINUTES_WORKIG_TIME
             , second : 0
             , state : STATE.WORK
             , timestamp : 0
-            , timerState : TIMER_STATE.STOPED
+            , interval : null
+            , kittyImage : "./kitty.png"
         };
 
-        new Vue({
-            el : "#app"
-            , data : data
-            , computed : {
-                title : function() {
-                    return this.state == STATE.WORK ? "working" : "rest";
-                }
-                , remainingMinute : function() {
-                    return (this.minute < 10)? "0" + this.minute : this.minute;
-                }
-                , remainingSecond : function() {
-                    return (this.second < 10)? "0" + this.second : this.second;
-                }
-                , isWorking : function() {
-                    return this.state == STATE.WORK;
+        var controlComponent = Vue.extend({
+            template : "#controlsComponent"
+            , data : function() {
+                return {
+                    timerState : TIMER_STATE.STOPPED                    
                 }
             }
             , methods : {
                 start : function() {
                     this.timerState = TIMER_STATE.STARTED;
-                    this._tick();
-                    this.interval = setInterval(this._tick, ONE_SECOND);
+                    this.$emit("start");
+                    this.interval = setInterval(this.tick, ONE_SECOND);
                 }
                 , pause : function() {
                     this.timerState = TIMER_STATE.PAUSED;
@@ -86,11 +89,60 @@
                 , stop : function() {
                     this.timerState = TIMER_STATE.STOPPED;
                     clearInterval(this.interval);
+                    this.$emit("stop");
+                }
+                , tick : function() {
+                   this.$emit("tick");
+                }
+            }
+        });
+        
+        var stateTitleComponent = Vue.extend({
+            template : "#stateTitleComponent"
+            , props : ["state"]
+            , computed : {
+                title : function() {
+                    return this.state == STATE.WORK ? "working" : "rest";
+                }
+             }
+        });
+        
+        var countDownComponent = Vue.extend({
+            template : "#countDownComponent"
+            , props : ["minute", "second"]
+            , computed : {
+                remainingMinute : function() {
+                    return (this.minute < 10)? "0" + this.minute : this.minute;
+                }
+                , remainingSecond : function() {
+                    return (this.second < 10)? "0" + this.second : this.second;
+                }
+             }
+        });
+        
+        var kittyComponent = Vue.extend({
+            template : "#kittensComponent"
+            , props : ["isVisble", "imageSource"]
+        });
+        
+        new Vue({
+            el : "#app"
+            , data : function() {
+                return pomodoro;
+            }
+            , components : {
+                "control-component" : controlComponent
+                , "state-title-component" : stateTitleComponent
+                , "count-down-component" : countDownComponent
+                , "kitty-component" : kittyComponent
+            }
+            , methods : {
+                reset : function() {
                     this.state = STATE.WORK;
                     this.minute = MINUTES_WORKIG_TIME;
                     this.second = 0;
                 }
-                , _tick : function() {
+                , tick : function() {
                     if(this.second !== 0) {
                         this.second--;
                         return;
@@ -117,7 +169,11 @@
                     }
                 }
             }
-        });
-                
+            , computed : {
+                isWorking : function() {
+                    return this.state == STATE.WORK;
+                }
+            }
+        });                
     </script>
 </html>
