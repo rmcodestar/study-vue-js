@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>StudyVueJs</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js
+"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+        <script src="https://unpkg.com/vue"></script>
+    </head>
+    <body>
+        <div id="app">
+            <div class="page-header">
+                <h1>
+                    <span>POMODORO</span>
+                    <button type="button" class="btn btn-default" @click="start()"><span class="glyphicon glyphicon-play"></span></button>
+                </h1>
+            </div>
+            <div class="well">
+                <div class="pomodoro-timer">
+                    <span>{{minute}}</span>:<span>{{second}}</span>
+                </div>
+            </div>
+
+        </div>
+    </body>
+    <script>
+        const STATE = {
+            WORK : "work"
+            , REST : "reset"
+        };
+        const MINUTES_WORKIG_TIME = 25;
+        const MINUTES_REST_TIME = 5;
+        const ONE_SECOND = 1000;
+
+        var data = {
+            minute : MINUTES_WORKIG_TIME
+            , second : 0
+            , state : STATE.WORK
+            , timestamp : 0
+        };
+
+        new Vue({
+            el : "#app"
+            , data : data
+            , methods : {
+                start : function() {
+                    this._tick();
+                    this.interval = setInterval(this._tick, ONE_SECOND);
+                }
+                , _tick : function() {
+                    if(this.second !== 0) {
+                        this.second--;
+                        return;
+                    }
+                    
+                    if(this.minute !== 0) {
+                        this.minute --;
+                        this.second = 59;
+                        return;
+                    }
+                    
+                    this.state = (this.state === STATE.WORK)? STATE.REST : STATE.WORK;
+
+                    switch (this.state) {
+                        case STATE.WORK :
+                        this.minute = MINUTES_WORKIG_TIME;
+                        break;
+
+                        case STATE.REST :
+                        this.minute = MINUTES_REST_TIME;
+                        break;
+                    }
+                }
+            }
+        })
+    </script>
+</html>
