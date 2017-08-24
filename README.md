@@ -58,7 +58,7 @@ new Vue({
 	<div class="page-header">
 	      <h1>
 		<span>POMODORO</span>
-		<button type="button" class="btn btn-default" @click="start()">
+		<button type="button" class="btn btn-default" @click="start">
 		    <span class="glyphicon glyphicon-play"></span>
 		</button>
 	      </h1>
@@ -170,11 +170,35 @@ var countDownComponent = Vue.extend({
 });
 ```
 
+### 3. props으로 자식 컴포넌트에게 데이터 전달하기
+하위 컴포넌트에서 props으로 전달받을 값을 명시하기
+```javascript
+var kittyComponent = Vue.extend({
+    template : "#kittensComponent"
+    , props : ["isVisble", "imageSource"]
+});
+```
+
+부모 컴포넌트에서 자식 컴포넌트에게 전달할 데이터 명시하기
+
+```html
+<div id="app">
+    <kitty-component :is-visble="isWorking" :image-source="kittyImage"></kitty-component>
+</div>
+```
+참고) isWorking, imageSource props를 명시할 때 html이 대소문자를 구별하지 않는 특성때문에 kebab-case으로 변경해서 적어둔다
+
+
+### 4. 부모자식간 컴포넌트 관계에서 이벤트는 어떻게 하나요?
+vue2에서 양방향 바인딩이 안되므로 이벤트로 해결해야 한다.
+부모 컴포넌트에게 자식 컴포넌트의 감지하고 있고(`v-on`), 자식 컴포넌트는 이벤트를 트리거(`emit`)하는 방식으로 구현해야 한다
+
+....continue....
 
 
 
 
 **추후 업데이트할 내용**
-
+* 스타일 바인딩
 * 필터 사용하기
 * Cat api 연동하기
