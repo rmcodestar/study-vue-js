@@ -9,15 +9,15 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
         <script src="https://unpkg.com/vue"></script>
     </head>
-    <body>
+    <body style="padding: 15px;">
         <template id="controlsComponent">
             <div class="page-header">
                 <h1>
                     <span>POMODORO</span>
                     <div class="btn-group">
-                        <button type="button" class="btn btn-default" @click="start()"><span class="glyphicon glyphicon-play"></span></button>
-                        <button type="button" class="btn btn-default" @click="pause()"><span class="glyphicon glyphicon-pause"></span></button>
-                        <button type="button" class="btn btn-default" @click="stop()"><span class="glyphicon glyphicon-stop"></span></button>
+                        <button type="button" class="btn btn-default" @click="start($event)"><span class="glyphicon glyphicon-play"></span></button>
+                        <button type="button" class="btn btn-default" @click="pause($event)"><span class="glyphicon glyphicon-pause"></span></button>
+                        <button type="button" class="btn btn-default" @click="stop($event)"><span class="glyphicon glyphicon-stop"></span></button>
                     </div>
                 </h1>
             </div>
@@ -85,19 +85,22 @@
                 }
             }
             , methods : {
-                start : function() {
+                start : function(event) {
                     this.timerState = TIMER_STATE.STARTED;
                     this.$emit("start");
                     this.interval = setInterval(this.tick, ONE_SECOND);
+                    $(event.currentTarget).toggleClass("active");
                 }
                 , pause : function() {
                     this.timerState = TIMER_STATE.PAUSED;
                     clearInterval(this.interval);
+                    $(event.currentTarget).toggleClass("active");
                 }
                 , stop : function() {
                     this.timerState = TIMER_STATE.STOPPED;
                     clearInterval(this.interval);
                     this.$emit("stop");
+                    $(event.currentTarget).toggleClass("active");
                 }
                 , tick : function() {
                    this.$emit("tick");
