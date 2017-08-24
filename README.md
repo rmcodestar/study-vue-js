@@ -4,13 +4,13 @@
 
 
 
-##[STEP 1] 포모도로 예제 만들기
+## [STEP 1] 포모도로 예제 만들기
 
 https://github.com/rmcodestar/study-vue-js/commit/ce221fe23e2fd17b4ac2976dccb1ccafeb6b99e2
 
 
 
-###1. vue 인스턴스 만들기
+### 1. vue 인스턴스 만들기
 
 ```javascript
 new Vue({
@@ -41,33 +41,32 @@ new Vue({
 
 ```html
 <div class="well">
-  <div class="pomodoro-timer">
- 	 <span>{{minute}}</span>:<span>{{second}}</span>
-  </div>
+	<div class="pomodoro-timer">
+		<span>{{minute}}</span>:<span>{{second}}</span>
+	</div>
 </div>
 ```
 
 
 
-###3. 이벤트 청취 
+### 3. 이벤트 청취 
 
 `v-on:click` 혹은 `@click` 디렉티브를 이용하여 이벤트 핸들링
 
 ```html
 <div id="app">
 	<div class="page-header">
-      <h1>
-        <span>POMODORO</span>
-        <button type="button" class="btn btn-default" @click="start()">
-            <span class="glyphicon glyphicon-play"></span>
-        </button>
-      </h1>
+	      <h1>
+		<span>POMODORO</span>
+		<button type="button" class="btn btn-default" @click="start()">
+		    <span class="glyphicon glyphicon-play"></span>
+		</button>
+	      </h1>
 	</div>
   ...생략...
 </div>
 ```
 
-### 
 
 ## [STEP2] 조건부 랜더링 : 휴식 중 일때 고양이 보여주기
 
@@ -88,16 +87,16 @@ new Vue({
     , data : data
     , computed : {
         title : function() {
-				return this.state == STATE.WORK ? "working" : "rest";
+		return this.state == STATE.WORK ? "working" : "rest";
         }
         , remainingMinute : function() {
-				return (this.minute < 10)? "0" + this.minute : this.minute;
+		return (this.minute < 10)? "0" + this.minute : this.minute;
         }
         , remainingSecond : function() {
                 return (this.second < 10)? "0" + this.second : this.second;
         }
         , isWorking : function() {
-        		return this.state == STATE.WORK;
+		return this.state == STATE.WORK;
         }
     }
 });
